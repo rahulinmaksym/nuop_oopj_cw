@@ -1,6 +1,10 @@
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Administrator implements IPerson {
+public class Administrator implements IPerson, Serializable {
 
     private String bHName;
     private String adminName;
@@ -13,10 +17,23 @@ public class Administrator implements IPerson {
         setAdminName(adminName);
         setOrders(orders);
         setClients(clients);
+        phoneNumber = 4201488;
+    }
+
+    public Administrator(String bHName, String adminName) {
+        setBHName(bHName);
+        setAdminName(adminName);
+        setOrders(new ArrayList<>());
+        setClients(new ArrayList<>());
+        phoneNumber = 4201488;
     }
 
     public List<Order> getOrdersFromAtoB(int a, int b) {
-        return orders;
+        List<Order> result = new ArrayList<>();
+        for (int i = a-1; i <= b-1; i++) {
+            result.add(orders.get(i));
+        }
+        return result;
     }
 
     public List<Client> getAllClients() {
@@ -24,34 +41,77 @@ public class Administrator implements IPerson {
     }
 
     public String getMostPopularOrderType() {
-        return orders.getFirst().getOrderType();
+
+        HashMap<String, Integer> frequencyMap = new HashMap<>();
+
+        for (Order order : orders) {
+            frequencyMap.put(order.getOrderType(), frequencyMap.getOrDefault(order.getOrderType(), 0) + 1);
+        }
+
+        String mostFrequentType = null;
+        int maxCount = 0;
+
+        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequentType = entry.getKey();
+            }
+        }
+
+        return mostFrequentType;
     }
 
     public int getAverageMealCount() {
-        return orders.size();
+        int averageMealCount = 0;
+        for (Order order : orders) {
+            averageMealCount += order.getMealNumber();
+        }
+        return Math.round((float) averageMealCount / orders.size());
     }
 
     public double getTheBiggestPrice() {
-        return orders.getFirst().getPrice();
+
+        double maxValue = orders.getFirst().getPrice();
+
+        for (Order order : orders) {
+            if (order.getPrice() > maxValue) {
+                maxValue = order.getPrice();
+            }
+        }
+
+        return maxValue;
     }
 
     public double getTheMostPopularStartingTime() {
-        return orders.getFirst().getStartsAt();
+
+        HashMap<Double, Integer> frequencyMap = new HashMap<>();
+
+        for (Order order : orders) {
+            frequencyMap.put(order.getStartsAt(), frequencyMap.getOrDefault(order.getStartsAt(), 0) + 1);
+        }
+
+        Double mostFrequentPrice = 0.0;
+        int maxCount = 0;
+
+        for (Map.Entry<Double, Integer> entry : frequencyMap.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequentPrice = entry.getKey();
+            }
+        }
+
+        return mostFrequentPrice;
     }
 
     @Override
     public void callNumber(int phoneNumber) {
-        System.out.println("Calling a client...\n");
+        System.out.println("Calling " + phoneNumber);
     }
 
     @Override
     public String toString() {
-        return "Administrator{" +
-                "bHName='" + bHName + '\'' +
-                ", adminName='" + adminName + '\'' +
-                ", orders=" + orders +
-                ", clients=" + clients +
-                "}\n";
+        return "Banquette hall name: " + bHName + ", \n" +
+                "Admin name: " + adminName + ", \n";
     }
 
     public String getBHName() {

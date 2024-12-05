@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Client implements IPerson {
+public class Client implements IPerson, Serializable {
 
     private String name;
     private String address;

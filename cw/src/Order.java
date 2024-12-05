@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Order {
+public class Order implements Serializable {
 
     private String address;
     private String orderType;
